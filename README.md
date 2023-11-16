@@ -1,78 +1,96 @@
 
-Конечно! Вот пример кода на языке Java для приложения ежедневник с двумя экранами и кнопкой "Добавить". На первом экране будет отображаться название дела, дата, время и описание задачи.
+PulseGPT - AI Assistant:
+Конечно, я могу помочь с написанием кода для приложения ежедневника с двумя экранами, кнопкой "Добавить" и использованием SQLiteHelper. Вот пример кода на языке Java:
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+1. Создайте класс DatabaseHelper, который будет расширять SQLiteOpenHelper:
 
-public class DailyPlannerApp extends JFrame {
-    private JTextField taskNameField;
-    private JTextField taskDateField;
-    private JTextField taskTimeField;
-    private JTextArea taskDescriptionArea;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
-    public DailyPlannerApp() {
-        setTitle("Ежедневник");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null);
+public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "TodoListDB";
+    private static final String TABLE_NAME = "TodoListTable";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_DATE = "date";
+    private static final String COLUMN_TIME = "time";
+    private static final String COLUMN_DESCRIPTION = "description";
 
-        // Создание элементов интерфейса на первом экране
-        JLabel taskNameLabel = new JLabel("Название дела:");
-        taskNameField = new JTextField(20);
-
-        JLabel taskDateLabel = new JLabel("Дата:");
-        taskDateField = new JTextField(10);
-
-        JLabel taskTimeLabel = new JLabel("Время:");
-        taskTimeField = new JTextField(10);
-
-        JLabel taskDescriptionLabel = new JLabel("Описание:");
-        taskDescriptionArea = new JTextArea(5, 20);
-        JScrollPane scrollPane = new JScrollPane(taskDescriptionArea);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        JButton addButton = new JButton("Добавить");
-        addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String taskName = taskNameField.getText();
-                String taskDate = taskDateField.getText();
-                String taskTime = taskTimeField.getText();
-                String taskDescription = taskDescriptionArea.getText();
-
-                // Здесь можно добавить код для сохранения задачи в ежедневнике или выполнить другие необходимые действия
-
-                JOptionPane.showMessageDialog(null, "Задача успешно добавлена!", "Успех", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 2));
-        panel.add(taskNameLabel);
-        panel.add(taskNameField);
-        panel.add(taskDateLabel);
-        panel.add(taskDateField);
-        panel.add(taskTimeLabel);
-        panel.add(taskTimeField);
-        panel.add(taskDescriptionLabel);
-        panel.add(scrollPane);
-        panel.add(addButton);
-
-        setContentPane(panel);
-        setVisible(true);
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new DailyPlannerApp();
-            }
-        });
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String query = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TITLE + " TEXT, " +
+                COLUMN_DATE + " TEXT, " +
+                COLUMN_TIME + " TEXT, " +
+                COLUMN_DESCRIPTION + " TEXT)";
+        db.execSQL(query);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 }
+2. Создайте класс MainActivity, который будет отображать первый экран с названием дел, датой, временем и описанием:
 
+`java
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
-Этот код использует библиотеку Swing для создания графического интерфейса пользователя (GUI). При нажатии кнопки "Добавить" вызывается метод actionPerformed, который получает значения из текстовых полей и выполняет необходимые действия, например, сохраняет задачу в ежедневнике. Затем, отображается информационное окно с сообщением о успешном добавлении задачи.
+import androidx.appcompat.app.AppCompatActivity;
 
-Примечание: Для запуска этого кода, вам потребуется настроить проект с библиотекой Swing.
+public class MainActivity extends AppCompatActivity {
+    private EditText titleEditText, dateEditText, timeEditText, descriptionEditText;
+    private Button addButton;
+    private DatabaseHelper databaseHelper;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        titleEditText = findViewById(R.id.titleEditText);
+        dateEditText = findViewById(R.id.dateEditText);
+        timeEditText = findViewById(R.id.timeEditText);
+        descriptionEditText = findViewById(R.id.descriptionEditText);
+        addButton = findViewById(R.id.addButton);
+
+        databaseHelper = new DatabaseHelper(this);
+        final SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = titleEditText.getText().toString();
+                String date = dateEditText.getText().toString();
+                String time = timeEditText.getText().toString();
+                String description = descriptionEditText.getText().toString();
+
+                // Вставка записи в базу данных
+                String query = "INSERT INTO " + DatabaseHelper.TABLE_NAME + " (" +
+                        DatabaseHelper.COLUMN_TITLE + ", " +
+                        DatabaseHelper.COLUMN_DATE + ", " +
+                        DatabaseHelper.COLUMN_TIME + ", " +
+                        DatabaseHelper.COLUMN_DESCRIPTION + ") VALUES ('" +
+                        title + "', '" + date + "', '" + time + "', '" + description + "')";
+                database.execSQL(query);
+
+                // Очистка полей ввода
+                titleEditText.setText("");
+                dateEditText.setText("");
+                timeEditText.setText("");
+                descriptionEditText.setText("");
+
+                // Переход на второй экран
