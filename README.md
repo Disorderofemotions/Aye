@@ -1,60 +1,78 @@
-# Aye
-Конечно, вот пример кода на языке Java для Android Studio:
 
-```java
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+Конечно! Вот пример кода на языке Java для приложения ежедневник с двумя экранами и кнопкой "Добавить". На первом экране будет отображаться название дела, дата, время и описание задачи.
 
-public class MainActivity extends AppCompatActivity {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-    private EditText fuelInput;
-    private TextView distanceOutput;
-    private Button calculateButton;
+public class DailyPlannerApp extends JFrame {
+    private JTextField taskNameField;
+    private JTextField taskDateField;
+    private JTextField taskTimeField;
+    private JTextArea taskDescriptionArea;
 
-    private static final int MAX_FUEL_CAPACITY = 50;
-    private static final double FUEL_CONSUMPTION = 12.0;
+    public DailyPlannerApp() {
+        setTitle("Ежедневник");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        setLocationRelativeTo(null);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // Создание элементов интерфейса на первом экране
+        JLabel taskNameLabel = new JLabel("Название дела:");
+        taskNameField = new JTextField(20);
 
-        fuelInput = findViewById(R.id.fuel_input);
-        distanceOutput = findViewById(R.id.distance_output);
-        calculateButton = findViewById(R.id.calculate_button);
+        JLabel taskDateLabel = new JLabel("Дата:");
+        taskDateField = new JTextField(10);
 
-        calculateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calculateDistance();
+        JLabel taskTimeLabel = new JLabel("Время:");
+        taskTimeField = new JTextField(10);
+
+        JLabel taskDescriptionLabel = new JLabel("Описание:");
+        taskDescriptionArea = new JTextArea(5, 20);
+        JScrollPane scrollPane = new JScrollPane(taskDescriptionArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        JButton addButton = new JButton("Добавить");
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String taskName = taskNameField.getText();
+                String taskDate = taskDateField.getText();
+                String taskTime = taskTimeField.getText();
+                String taskDescription = taskDescriptionArea.getText();
+
+                // Здесь можно добавить код для сохранения задачи в ежедневнике или выполнить другие необходимые действия
+
+                JOptionPane.showMessageDialog(null, "Задача успешно добавлена!", "Успех", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(5, 2));
+        panel.add(taskNameLabel);
+        panel.add(taskNameField);
+        panel.add(taskDateLabel);
+        panel.add(taskDateField);
+        panel.add(taskTimeLabel);
+        panel.add(taskTimeField);
+        panel.add(taskDescriptionLabel);
+        panel.add(scrollPane);
+        panel.add(addButton);
+
+        setContentPane(panel);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new DailyPlannerApp();
             }
         });
     }
-
-    private void calculateDistance() {
-        String fuelStr = fuelInput.getText().toString();
-
-        if (fuelStr.isEmpty()) {
-            Toast.makeText(this, "Введите количество литров", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double fuelAmount = Double.parseDouble(fuelStr);
-
-        if (fuelAmount > MAX_FUEL_CAPACITY) {
-            Toast.makeText(this, "Ошибка: превышено максимальное количество литров", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double distance = (fuelAmount / FUEL_CONSUMPTION) * 100.0;
-        distanceOutput.setText(String.valueOf(distance) + " км");
-    }
 }
-```
 
-В этом примере мы используем EditText для ввода количества литров топлива, TextView для отображения расстояния и Button для запуска расчета. Мы также добавили проверки на пустой ввод и превышение максимального количества литров. Рассчет расстояния выполняется по формуле `(количество литров / расход топлива) * 100`.
+
+Этот код использует библиотеку Swing для создания графического интерфейса пользователя (GUI). При нажатии кнопки "Добавить" вызывается метод actionPerformed, который получает значения из текстовых полей и выполняет необходимые действия, например, сохраняет задачу в ежедневнике. Затем, отображается информационное окно с сообщением о успешном добавлении задачи.
+
+Примечание: Для запуска этого кода, вам потребуется настроить проект с библиотекой Swing.
