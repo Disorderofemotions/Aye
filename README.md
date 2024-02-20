@@ -1,4 +1,3 @@
-допиши в код чтобы при вводе букв в строки х и у писало об ошибке:
 import java.util.Scanner;
 
 public class MatrixDeterminant {
@@ -7,8 +6,17 @@ public class MatrixDeterminant {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Введите количество строк матрицы: ");
+        if (!scanner.hasNextInt()) {
+            System.out.println("Ошибка: введите число");
+            return;
+        }
         int x = scanner.nextInt();
+
         System.out.print("Введите количество столбцов матрицы: ");
+        if (!scanner.hasNextInt()) {
+            System.out.println("Ошибка: введите число");
+            return;
+        }
         int y = scanner.nextInt();
 
         int[][] matrix = new int[x][y];
