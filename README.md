@@ -1,38 +1,81 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-public class StoreMaterial {
+// Класс товара
+public class Product {
     private int id;
     private String name;
     private String description;
     private double price;
-    private int number;
-    private int numberCard;
-    private int idCard;
+    private int quantityAvailable;
+    private int quantityInOrder;
+    private int orderId;
 
-    public StoreMaterial(int id, String name, String description, double price, int number, int numberCard, int idCard) {
+    public Product(int id, String name, String description, double price, int quantityAvailable, int quantityInOrder, int orderId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.number = number;
-        this.numberCard = numberCard;
-        this.idCard = idCard;
+        this.quantityAvailable = quantityAvailable;
+        this.quantityInOrder = quantityInOrder;
+        this.orderId = orderId;
     }
 
     @Override
     public String toString() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "";
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantityAvailable=" + quantityAvailable +
+                ", quantityInOrder=" + quantityInOrder +
+                ", orderId=" + orderId +
+                '}';
+    }
+}
+
+// Интерфейс для взаимодействия с клиентом
+public interface OnlineShop {
+    void showAvailableProducts(); // Показать доступные товары
+
+    String orderProduct(int productId, int quantity); // Заказать товар по id и указанному количеству
+
+    void showOrderedProducts(); // Показать заказанные товары
+}
+
+// Реализация интерфейса
+public class OnlineShopImpl implements OnlineShop {
+    private List<Product> products = new ArrayList<>();
+
+    @Override
+    public void showAvailableProducts() {
+        for (Product product : products) {
+            System.out.println(product.toString());
         }
     }
 
-    public static void main(String[] args) {
-        StoreMaterial material = new StoreMaterial(1, "Wood", "High quality wood material", 50.0, 100, 1234, 5678);
-        System.out.println(material.toString());
+    @Override
+    public String orderProduct(int productId, int quantity) {
+        for (Product product : products) {
+            if (product.getId() == productId) {
+                if (quantity <= product.getQuantityAvailable()) {
+                    product.setQuantityInOrder(product.getQuantityInOrder() + quantity);
+                    product.setQuantityAvailable(product.getQuantityAvailable() - quantity);
+                    product.setOrderId(1); // Устанавливаем айди заказа
+                    return product.toString();
+                } else {
+                    return "Недостаточно товара в наличии";
+                }
+            }
+        }
+        return "Товар с указанным id не найден";
+    }
+
+    @Override
+    public void showOrderedProducts() {
+        List<Product> orderedProducts = products.stream()
+                .filter(product -> product.getQuantityInOrder() > 0)
+                .collect(Collectors.toList());
+        for (Product product : orderedProducts) {
+            System.out.println(product.toString());
+        }
     }
 }
