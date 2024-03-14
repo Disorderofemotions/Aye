@@ -1,77 +1,59 @@
-    // Добавление минимум 10 сущностей
-    for (int i = 0; i < 10; i++) {
-        Book book = new Book.Builder()
-                .setId((long) i)
-                .setName("Book " + i)
-                .setDescription("Description of Book " + i)
-                .setIsdn("ISBN " + i)
-                .setPrice(10.0 + i)
-                .setDiscount(0.2)
-                .setNumber(10 + i)
-                .build();
+```java
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.Vector;
 
-        booksMap.put(book.id, book);
+class Food {
+    private int id;
+    private String name;
+    private String description;
+
+    public Food(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
-
-    // Вывод информации о всех книгах
-    for (Book book : booksMap.values()) {
-        System.out.println(book);
-    }
-
-    Scanner scanner = new Scanner(System.in);
-    int choice = 0;
-
-    do {
-        System.out.println("Выберите действие:");
-        System.out.println("1. Посмотреть все книги");
-        System.out.println("2. Добавить книгу");
-        System.out.println("3. Удалить книгу");
-        System.out.println("4. Выйти");
-
-        choice = scanner.nextInt();
-
-        switch (choice) {
-            case 1:
-                System.out.println("Информация о всех книгах:");
-                for (Book book : booksMap.values()) {
-                    System.out.println(book);
-                }
-                break;
-
-            case 2:
-                // Добавляем новую книгу
-                Book newBook = new Book.Builder()
-                        .setId((long) booksMap.size())
-                        .setName("New Book")
-                        .setDescription("Description of New Book")
-                        .setIsdn("New ISBN")
-                        .setPrice(15.0)
-                        .setDiscount(0.1)
-                        .setNumber(5)
-                        .build();
-
-                booksMap.put(newBook.id, newBook);
-                System.out.println("Новая книга добавлена: " + newBook);
-                break;
-
-            case 3:
-                // Удаляем книгу
-                System.out.println("Введите ID книги для удаления:");
-                Long idToRemove = scanner.nextLong();
-                if (booksMap.containsKey(idToRemove)) {
-                    booksMap.remove(idToRemove);
-                    System.out.println("Книга успешно удалена");
-                } else {
-                    System.out.println("Книга с таким ID не найдена");
-                }
-                break;
-
-            case 4:
-                System.out.println("Выход из программы");
-                break;
-
-            default:
-                System.out.println("Некорректный выбор, повторите попытку");
-        }
-    } while (choice != 4);
 }
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<Food> arrayList = new ArrayList<>();
+        Set<Food> set = new HashSet<>();
+        LinkedList<Food> linkedList = new LinkedList<>();
+        HashSet<Food> hashSet = new HashSet<>();
+        Vector<Food> vector = new Vector<>();
+
+        // Заполнение списка продуктов
+        for (int i = 0; i < 100000; i++) {
+            Food food = new Food(i, "Food" + i, "Description" + i);
+            arrayList.add(food);
+            set.add(food);
+            linkedList.add(food);
+            hashSet.add(food);
+            vector.add(food);
+        }
+
+        // Добавление одного элемента в начало, в середину и в конец
+        Food newFood = new Food(100001, "New Food", "New Description");
+
+        arrayList.add(0, newFood);  // Добавление в начало списка
+        linkedList.add(linkedList.size() / 2, newFood); // Добавление в середину списка
+        vector.add(newFood); // Добавление в конец списка
+
+        // Удаление одного элемента
+        arrayList.remove(0);
+        set.remove(newFood);
+        linkedList.remove(newFood);
+        hashSet.remove(newFood);
+        vector.remove(newFood);
+
+        // Модификация одного элемента
+        Food foodToModify = arrayList.get(0);
+        foodToModify.setName("Modified Food");
+        foodToModify.setDescription("Modified Description");
+
+    }
+}
+```
