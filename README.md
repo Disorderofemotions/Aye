@@ -5,15 +5,22 @@ class Plant {
     private int id;
     private String name;
     private String description;
-    private long timeHarvest;
+    private long timeToHarvest;
     private long timeStart;
 
-    public Plant(int id, String name, String description, long timeHarvest, long timeStart) {
+    public Plant(int id, String name, String description, long timeToHarvest) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.timeHarvest = timeHarvest;
-        this.timeStart = timeStart;
+        this.timeToHarvest = timeToHarvest;
+        this.timeStart = System.currentTimeMillis();
+    }
+
+    public void grow() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - timeStart >= timeToHarvest * 1000) {
+            System.out.println(name + " has grown!");
+        }
     }
 
     public int getId() {
@@ -27,33 +34,23 @@ class Plant {
     public String getDescription() {
         return description;
     }
-
-    public long getTimeHarvest() {
-        return timeHarvest;
-    }
-
-    public long getTimeStart() {
-        return timeStart;
-    }
 }
 
 public class GardenerApp {
     private static ArrayList<Plant> plants = new ArrayList<>();
-    private static int nextId = 1;
+    private static int plantId = 1;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int choice;
-
-        do {
+        
+        while (true) {
             System.out.println("Menu:");
             System.out.println("1. View all plants");
             System.out.println("2. Add a plant");
             System.out.println("3. Exit");
-
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
-
+            int choice = scanner.nextInt();
+            
             switch (choice) {
                 case 1:
                     viewAllPlants();
@@ -62,45 +59,38 @@ public class GardenerApp {
                     addPlant();
                     break;
                 case 3:
-                    System.out.println("Exiting application...");
-                    break;
+                    System.out.println("Exiting...");
+                    return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 3);
+        }
     }
 
     private static void viewAllPlants() {
-        System.out.println("All plants:");
+        System.out.println("All Plants:");
         for (Plant plant : plants) {
-            System.out.println("ID: " + plant.getId());
-            System.out.println("Name: " + plant.getName());
-            System.out.println("Description: " + plant.getDescription());
-            System.out.println("Time to harvest: " + plant.getTimeHarvest() + " days");
-            System.out.println("Time started: " + plant.getTimeStart());
-            System.out.println();
+            plant.grow();
+            System.out.println(plant.getId() + ". " + plant.getName() + " - " + plant.getDescription());
         }
     }
 
     private static void addPlant() {
         Scanner scanner = new Scanner(System.in);
-
+        
         System.out.print("Enter plant name: ");
-        String name = scanner.nextLine();
-
+        String name = scanner.next();
+        
         System.out.print("Enter plant description: ");
-        String description = scanner.nextLine();
-
-        System.out.print("Enter time to harvest (in days): ");
-        long timeHarvest = scanner.nextLong();
-
-        long timeStart = System.currentTimeMillis();
-
-        Plant newPlant = new Plant(nextId, name, description, timeHarvest, timeStart);
+        String description = scanner.next();
+        
+        System.out.print("Enter time to harvest (in seconds): ");
+        long timeToHarvest = scanner.nextLong();
+        
+        Plant newPlant = new Plant(plantId, name, description, timeToHarvest);
         plants.add(newPlant);
-
-        nextId++;
-
+        plantId++;
+        
         System.out.println("Plant added successfully.");
     }
 }
