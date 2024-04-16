@@ -1,43 +1,41 @@
-<TimePicker
-    android:id="@+id/time_picker"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-/>
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TimePicker;
+import android.widget.TextView;
 
-<Button
-    android:id="@+id/set_alarm_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Set Alarm"
-/>
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TimePicker timePicker;
+    private Button alarmButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        timePicker = findViewById(R.id.timePicker);
+        alarmButton = findViewById(R.id.alarmButton);
+
+        alarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = timePicker.getCurrentHour();
+                int minute = timePicker.getCurrentMinute();
+
+                Intent intent = new Intent(MainActivity.this, AlarmActivity.class);
+                intent.putExtra("hour", hour);
+                intent.putExtra("minute", minute);
+                startActivity(intent);
+            }
+        });
+    }
+}
 
 
 
 
 
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AlarmActivity">
-
-    <EditText
-        android:id="@+id/day_edit_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <EditText
-        android:id="@+id/time_edit_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/day_edit_text"/>
-
-    <Button
-        android:id="@+id/dismiss_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dismiss"
-        android:layout_below="@id/time_edit_text"/>
-
-</RelativeLayout>
