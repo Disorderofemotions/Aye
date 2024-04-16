@@ -1,37 +1,41 @@
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 
-import androidx.appcompat.app.AppCompatActivity;
+import java.util.Calendar;
 
-public class AlarmActivity extends AppCompatActivity {
+public class AlarmHelper {
 
-    private EditText dayEditText;
-    private EditText timeEditText;
-    private Button dismissButton;
-    private MediaPlayer mediaPlayer;
+    private static AlarmHelper instance;
+    private PendingIntent pendingIntent;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alarm);
+    private AlarmHelper() {}
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound);
+    public static AlarmHelper getInstance() {
+        if (instance == null) {
+            instance = new AlarmHelper();
+        }
+        return instance;
+    }
 
-        dayEditText = findViewById(R.id.day_edit_text);
-        timeEditText = findViewById(R.id.time_edit_text);
-        dismissButton = findViewById(R.id.dismiss_button);
+    public void setAlarm(Context context, int hour, int minute) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        dismissButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaPlayer.stop();
-                finish();
-            }
-        });
+        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mediaPlayer.start();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    public void cancelAlarm(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 }
