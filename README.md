@@ -1,41 +1,43 @@
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
+<TimePicker
+    android:id="@+id/time_picker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+/>
 
-import java.util.Calendar;
+<Button
+    android:id="@+id/set_alarm_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Set Alarm"
+/>
 
-public class AlarmHelper {
 
-    private static AlarmHelper instance;
-    private PendingIntent pendingIntent;
 
-    private AlarmHelper() {}
 
-    public static AlarmHelper getInstance() {
-        if (instance == null) {
-            instance = new AlarmHelper();
-        }
-        return instance;
-    }
 
-    public void setAlarm(Context context, int hour, int minute) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AlarmActivity">
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
+    <EditText
+        android:id="@+id/day_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-    }
+    <EditText
+        android:id="@+id/time_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/day_edit_text"/>
 
-    public void cancelAlarm(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-    }
-}
+    <Button
+        android:id="@+id/dismiss_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dismiss"
+        android:layout_below="@id/time_edit_text"/>
+
+</RelativeLayout>
