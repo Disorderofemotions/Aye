@@ -1,41 +1,42 @@
-import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
 import android.widget.Button;
-import android.widget.TimePicker;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class AlarmActivity extends AppCompatActivity {
 
-    private TimePicker timePicker;
-    private Button alarmButton;
+    private TextView dayEditText;
+    private TextView timeEditText;
+    private Button snoozeButton;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_alarm);
 
-        timePicker = findViewById(R.id.timePicker);
-        alarmButton = findViewById(R.id.alarmButton);
+        dayEditText = findViewById(R.id.dayEditText);
+        timeEditText = findViewById(R.id.timeEditText);
+        snoozeButton = findViewById(R.id.snoozeButton);
 
-        alarmButton.setOnClickListener(new View.OnClickListener() {
+        int hour = getIntent().getIntExtra("hour", 0);
+        int minute = getIntent().getIntExtra("minute", 0);
+
+        timeEditText.setText(String.format("%02d:%02d", hour, minute));
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound);
+        mediaPlayer.start();
+
+        snoozeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int hour = timePicker.getCurrentHour();
-                int minute = timePicker.getCurrentMinute();
-
-                Intent intent = new Intent(MainActivity.this, AlarmActivity.class);
-                intent.putExtra("hour", hour);
-                intent.putExtra("minute", minute);
-                startActivity(intent);
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                finish();
             }
         });
     }
 }
-
-
-
-
-
