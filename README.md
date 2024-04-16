@@ -1,48 +1,36 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TimePicker;
 
-    <TextView
-        android:id="@+id/text_view_p1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player 1: 0"
-        android:layout_marginBottom="8dp"/>
+import androidx.appcompat.app.AppCompatActivity;
 
-    <TextView
-        android:id="@+id/text_view_p2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player 2: 0"
-        android:layout_below="@id/text_view_p1"
-        android:layout_marginBottom="8dp"/>
+public class MainActivity extends AppCompatActivity {
 
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:rowCount="3"
-        android:columnCount="3">
+    private TimePicker timePicker;
+    private Button setAlarmButton;
 
-        <Button
-            android:id="@+id/button_00"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_column="0"
-            android:layout_row="0"/>
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        <!--Buttons for other cells in the grid, with similar attributes-->
+        timePicker = findViewById(R.id.time_picker);
+        setAlarmButton = findViewById(R.id.set_alarm_button);
 
-    </GridLayout>
+        setAlarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = timePicker.getHour();
+                int minute = timePicker.getMinute();
 
-    <Button
-        android:id="@+id/button_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset Game"
-        android:layout_below="@id/text_view_p2"/>
+                AlarmHelper.getInstance().setAlarm(MainActivity.this, hour, minute);
 
-</RelativeLayout>
+                Intent intent = new Intent(MainActivity.this, AlarmActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+}
