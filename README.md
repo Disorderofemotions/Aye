@@ -1,42 +1,21 @@
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.os.Handler;
-import android.widget.Button;
-import android.widget.TextView;
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-import androidx.appcompat.app.AppCompatActivity;
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 
-public class AlarmActivity extends AppCompatActivity {
+    <Button
+        android:id="@+id/alarmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timePicker"
+        android:layout_centerHorizontal="true"
+        android:text="Set Alarm" />
 
-    private TextView dayEditText;
-    private TextView timeEditText;
-    private Button snoozeButton;
-    private MediaPlayer mediaPlayer;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alarm);
-
-        dayEditText = findViewById(R.id.dayEditText);
-        timeEditText = findViewById(R.id.timeEditText);
-        snoozeButton = findViewById(R.id.snoozeButton);
-
-        int hour = getIntent().getIntExtra("hour", 0);
-        int minute = getIntent().getIntExtra("minute", 0);
-
-        timeEditText.setText(String.format("%02d:%02d", hour, minute));
-
-        mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound);
-        mediaPlayer.start();
-
-        snoozeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                finish();
-            }
-        });
-    }
-}
+</RelativeLayout>
